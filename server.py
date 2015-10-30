@@ -115,16 +115,22 @@ def new_event():
             subtitle = '%s%s - %s' % (symbol, note_id, parent_title)
             link_text = '%s%s' % (symbol, note_id)
 
-        description = add_markdown_quotes(data['object_attributes']['note'])
+        users = find_mentions(data['object_attributes']['note'])
+        truncated_text = data['object_attributes']['note'][:35]
 
-        text = '*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*\n%s' % (
-            data['user']['username'],
-            data['user']['username'],
-            note_type,
-            link_text,
-            data['object_attributes']['url'],
-            data['object_attributes']['note']
-        )
+        text = ''
+        if (len(users) > 0):
+            text += ('%s: ' % (", ".join(users)))
+
+        text += ('*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*: %s...' % (
+                data['user']['username'],
+                data['user']['username'],
+                note_type,
+                link_text,
+                data['object_attributes']['url'],
+                truncated_text
+        ))
+    
 
         base_url = data['repository']['homepage']
     elif REPORT_EVENTS[MERGE_EVENT] and object_kind == MERGE_EVENT:
@@ -201,6 +207,13 @@ def add_markdown_quotes(text):
         split_desc[index] = '> ' + line
 
     return '\n'.join(split_desc)
+
+def find_mentions(text):
+    """
+    Find @username instances in text and return them as an array
+    """
+
+    return re.findall(r"@\w+", text)
 
 if __name__ == "__main__":
     MATTERMOST_WEBHOOK_URL = os.environ.get('MATTERMOST_WEBHOOK_URL', '')
