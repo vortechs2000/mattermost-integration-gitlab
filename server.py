@@ -65,7 +65,7 @@ def new_event():
         if action == 'open' or action == 'reopen':
             description = add_markdown_quotes(data['object_attributes']['description'])
 
-            text = '#### [%s](%s)\n*[Issue #%s](%s/issues) created by %s in [%s](%s) on [%s](%s)*\n %s' % (
+            text = '[%s](%s)\n*[Issue #%s](%s/issues) created by @%s in [%s](%s) on [%s](%s)*' % (
                 data['object_attributes']['title'],
                 data['object_attributes']['url'],
                 data['object_attributes']['iid'],
@@ -74,8 +74,7 @@ def new_event():
                 data['repository']['name'],
                 data['repository']['homepage'],
                 data['object_attributes']['created_at'],
-                data['object_attributes']['url'],
-                description
+                data['object_attributes']['url']
             )
 
             base_url = data['repository']['homepage']
@@ -111,23 +110,20 @@ def new_event():
         subtitle = ''
         if note_type == 'commit':
             subtitle = '%s' % data['commit']['id']
+            link_text = ''
         else:
             subtitle = '%s%s - %s' % (symbol, note_id, parent_title)
+            link_text = '%s%s' % (symbol, note_id)
 
         description = add_markdown_quotes(data['object_attributes']['note'])
 
-        text = '#### **New Comment** on [%s](%s)\n*[%s](https://gitlab.com/u/%s) commented on %s %s in [%s](%s) on [%s](%s)*\n %s' % (
-            subtitle,
-            data['object_attributes']['url'],
+        text = '*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*\n%s' % (
             data['user']['username'],
             data['user']['username'],
-            type_grammar,
             note_type,
-            data['repository']['name'],
-            data['repository']['homepage'],
-            data['object_attributes']['created_at'],
+            link_text,
             data['object_attributes']['url'],
-            description
+            data['object_attributes']['note']
         )
 
         base_url = data['repository']['homepage']
@@ -137,17 +133,12 @@ def new_event():
         if action == 'open' or action == 'reopen':
             description = add_markdown_quotes(data['object_attributes']['description'])
 
-            text = '#### [!%s - %s](%s)\n*[%s](https://gitlab.com/u/%s) created a merge request in [%s](%s) on [%s](%s)*\n %s' % (
+            text = '*[@%s](https://gitlab.com/u/%s) created* [!%s - %s](%s)' % (
+                data['user']['username'],
+                data['user']['username'],
                 data['object_attributes']['iid'],
                 data['object_attributes']['title'],
                 data['object_attributes']['url'],
-                data['user']['username'],
-                data['user']['username'],
-                data['object_attributes']['target']['name'],
-                data['object_attributes']['target']['web_url'],
-                data['object_attributes']['created_at'],
-                data['object_attributes']['url'],
-                description
             )
 
             base_url = data['object_attributes']['target']['web_url']
