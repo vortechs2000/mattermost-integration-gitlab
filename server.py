@@ -27,6 +27,8 @@ REPORT_EVENTS = {
     MERGE_EVENT: True, # When a merge request is created
 }
 
+TRUNCATE_LENGTH = 35
+
 @app.route('/')
 def root():
     """
@@ -115,14 +117,16 @@ def new_event():
             subtitle = '%s%s - %s' % (symbol, note_id, parent_title)
             link_text = '%s%s' % (symbol, note_id)
 
-        users = find_mentions(data['object_attributes']['note'])
-        truncated_text = data['object_attributes']['note'][:35]
+        note_text = data['object_attributes']['note']
+
+        users = find_mentions(note_text)
+        truncated_text = (note_text[:TRUNCATE_LENGTH] + '...') if len(note_text) > TRUNCATE_LENGTH else note_text
 
         text = ''
         if (len(users) > 0):
             text += ('%s: ' % (", ".join(users)))
 
-        text += ('*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*: %s...' % (
+        text += ('*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*: %s' % (
                 data['user']['username'],
                 data['user']['username'],
                 note_type,
