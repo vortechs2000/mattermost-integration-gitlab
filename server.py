@@ -112,7 +112,7 @@ def new_event():
         subtitle = ''
         if note_type == 'commit':
             subtitle = '%s' % data['commit']['id']
-            link_text = ''
+            link_text = data['commit']['id'][:11]
         else:
             subtitle = '%s%s - %s' % (symbol, note_id, parent_title)
             link_text = '%s%s' % (symbol, note_id)
