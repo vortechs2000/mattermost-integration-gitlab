@@ -126,7 +126,7 @@ def new_event():
         if (len(users) > 0):
             text += ('%s: ' % (", ".join(users)))
 
-        text += ('*[@%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*: %s' % (
+        text += ('*[%s](https://gitlab.com/u/%s) commented on %s [%s](%s)*: %s' % (
                 data['user']['username'],
                 data['user']['username'],
                 note_type,
@@ -143,7 +143,7 @@ def new_event():
         if action == 'open' or action == 'reopen':
             description = add_markdown_quotes(data['object_attributes']['description'])
 
-            text = '*[@%s](https://gitlab.com/u/%s) created* [!%s - %s](%s)' % (
+            text = '*[%s](https://gitlab.com/u/%s) created* [!%s - %s](%s)' % (
                 data['user']['username'],
                 data['user']['username'],
                 data['object_attributes']['iid'],
